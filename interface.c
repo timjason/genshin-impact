@@ -1,7 +1,9 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<conio.h>
 #include<windows.h>
 #include"warehouse.h"
+#include"time.h"
 int high, width;
 extern yuan_shi, xing_chen, xing_chen0, xing_hui, xing_hui0, jiu_chan, xiang_yu;
 void show();
@@ -9,7 +11,7 @@ void gotoxy(int x, int y);
 void startup();
 void choukache();
 void duihuan();
-void gotoxy(int x, int y)//将光标移动到（x，y）位置
+void gotoxy(int x, int y)
 {
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD pos;
@@ -318,14 +320,15 @@ void duihuan()
 		}
 	}
 }
-void show()//启动页面
+void show()
 {
 	startup();
+	up_cho();
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO cci;
 	GetConsoleCursorInfo(hOut, &cci);
 	cci.bVisible = FALSE;
-	SetConsoleCursorInfo(hOut, &cci);//隐藏光标
+	SetConsoleCursorInfo(hOut, &cci);
 	system("CLS");
 	gotoxy(50, 8);
 	printf("——原神抽卡模拟器——");
@@ -336,7 +339,7 @@ void show()//启动页面
 	gotoxy(53, 16);
 	printf("兑换");
 	gotoxy(53, 19);
-	printf("抽卡记录");
+	printf("充值");
 	gotoxy(53, 22);
 	printf("退出抽卡");
 	int flag1 = 0;
@@ -387,7 +390,7 @@ void show()//启动页面
 			key2 = _getch();
 			if (key2 == 13)
 			{
-				//函数
+				chongzhi();
 			}
 			break;
 		case 3:
@@ -420,4 +423,252 @@ void show()//启动页面
 			break;
 		}
 	}
+}
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>  //为fgets函数提供原型
+#include <stdlib.h> //为perror函数提供原型
+#include <string.h> //为strcpy函数和strcat函数提供原型
+#include <time.h>   //为clock函数提供原型
+#include <windows.h>
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
+void zifu()
+{
+	printf("\n\n◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◆◆◇◇◇◇◇◇◇◆◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◆◆◆◇◇◇◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◇◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◆◆◆◇◇◇◇◇◇◆◆◆◇◇◇◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◇◆◆◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◆◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◇◆◆◇◇◇◇◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◇◆◆◆◆◇◇◆◆◇◇◇◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◆◆◇◇◇◆◇◇◆◆◆◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◇◆◆◆◆◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◇◇◇◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◇◆◇◇◆◆◆◆◆◆◆◇◇◆◆◇◇◇◇◇◇◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◇◆◆◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◇◆◇◇◆◇◇◇◇◇◆◆◇◆◆◇◇◇◇◇◇◇◆◆◆◇◆◆◆◇◇◆◇◇◇◆◇◇◇◆◆◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◆◆◇◇◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◆◆◇◇◇◆◇◇◆◆◆◆◆◆◆◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◆◆◇◇◆◆◆◆◆◆◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◆◆◆◆◇◇◆◆◆◆◆◆◆◆◆◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◆◆◇◇◆◆◇◇◇◇◆◆◆◆◇◇◇◇◇◇◇◇◇◇◆◆◆◆◆◆◆◆◇◇◇◆◇◇◇◆◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◆◆◇◆◆◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◆◆◆◆◇◆◆◆◆◇◇◇◆◇◇◆◆◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◆◆◇◇◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◇◇◇◆◆◆◇◆◇◇◆◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◆◆◇◇◆◇◇◇◆◆◆◇◇◇◇◇◇◇◇◇◇◆◆◆◇◇◆◇◇◇◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◆◆◇◇◇◆◆◇◇◇◆◇◆◆◇◇◇◇◇◇◇◆◆◆◇◇◇◆◇◇◇◇◆◇◇◇◆◇◇◆◆◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◆◆◇◇◇◆◆◇◇◇◆◇◇◆◆◆◇◇◇◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◆◆◆◇◇◆◆◆◇◇◇◆◇◇◇◆◆◆◇◇◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◆◆◇◇◆◆◆◇◇◇◇◆◇◇◇◇◆◆◆◇◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◆◆◇◇◆◆◆◇◆◆◆◆◆◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◆◆◇◇◆◆◇◇◇◆◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◆◇◇◇◇◇◇◇◇◇◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(30);
+
+	printf("◇◇◇◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇\n\n\n");
+
+	Sleep(1500);
+
+	printf("◇◇◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◇◇◇◇◇◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◇◇◇◇◇◇◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◇◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◆◆◇◇◇◇◇◆◇◇◇◇◆◇◇◇◇◇◇◇◇◇◆◆◆◆◆◆◆◆◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◇◆◇◇◇◇◇◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◆◆◆◆◆◆◆◆◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◇◆◆◆◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◇◇◇◆◇◇◇◇◇◇◇◇◇◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◇◆◆◆◆◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◇◆◆◆◆◇◇◇◇◇◇◇◇◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◇◆◇◇◇◇◇◇◇◆◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◆◆◆◆◆◆◆◆◆◆◇◇◇◆◇◇◇◇◇◇◇◇◇◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◆◆◆◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇◇◇◆◆◆◆◆◆◆◆◆◆◆◇◇◆◆◇◇◆◆◇◇◇◇◇◇◇◇◇◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◆◆◆◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◆◆◆◆◇◇◇◇◇◇◆◆◇◇◇◆◆◇◇◇◇◇◇◇◇◇◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◆◆◇◇◇◆◆◇◇◇◇◇◇◇◇◇◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◆◆◆◆◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇◇◆◆◇◆◇◇◇◇◇◆◆◇◇◇◆◆◇◇◇◇◇◇◇◇◇◆◆◇◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◆◆◆◆◇◇◇◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◇◆◆◇◆◆◇◇◇◇◆◆◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◆◇◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◆◆◇◆◆◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◆◆◇◇◇◆◆◇◇◆◆◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◆◇◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◆◆◇◇◆◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◆◆◇◇◆◆◆◆◇◆◆◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◆◆◆◇◇◆◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◆◆◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇◆◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◆◆◇◇◇◆◇◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◆◆◆◆◆◇◇◇◆◆◆◆◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◆◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◆◆◇◇◇◇◆◇◇◇◇◇◆◆◆◆◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◆◆◇◆◆◇◇◆◆◇◇◇◇◇◇◇◇◇◆◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◆◆◇◇◇◆◆◆◆◆◆◆◆◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◆◇◇◆◆◆◆◆◇◇◇◇◇◇◇◇◇◇◆◆◆◇\n");
+
+	Sleep(10);
+
+	printf("◇◆◆◇◇◇◇◆◆◆◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◆◇◇◇◇◆◆◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(10);
+
+	printf("◆◆◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◆◆◇◇◇◇◇◇◆◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇\n");
+
+	Sleep(10);
+
+	printf("◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇◆◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇\n");
+
+	system("cls");
+
+
+}
+void jiemian()
+{
+	void recursur();
+	recursur();
+	zifu();
+	int i = 0, caf = 33;
+	char p = 0;
+	FILE* fp;
+	clock_t stime = 0, ftime = 0;
+	char buf[5000] = { 0 }, seat[5000] = ".\\txt\\yuanshen(0).txt", ai[5];
+	system("cls");
+	PlaySound(TEXT(".\\原神\\Adobe Premiere Pro Auto-Save\\yuanshen.wav"), NULL, SND_FILENAME | SND_ASYNC);
+	stime = clock();
+	while (i <= 884)
+	{
+		if (i % 30 == 0)
+		{
+			caf = 43;
+		}
+		else
+		{
+			caf = 33;
+		}
+		strcpy(seat, ".\\txt\\yuanshen(");
+		sprintf(ai, "%d", i);
+		strcat(seat, ai);
+		strcat(seat, ").txt");
+		ftime = clock();
+		if ((ftime - stime) >= caf)
+		{
+			i++;
+			fp = fopen(seat, "r");
+			fread(buf, sizeof(buf), 1, fp);
+			buf[1920] = '\0';
+			fclose(fp);
+			fprintf(stdout, "%s", buf);
+			//fprintf(stdout, "Frame:%d", i);
+			stime += caf;
+			recursur();
+		}
+	}
+	system("cls");
+}
+void recursur()
+{
+	HANDLE hout;
+	COORD coord;
+	coord.X = 0;
+	coord.Y = 0;
+	hout = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hout, coord);
 }

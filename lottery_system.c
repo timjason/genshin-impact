@@ -1,3 +1,5 @@
+#define  _CRT_SECURE_NO_WARNINGS
+#include"string.h"
 #include"stdio.h"
 #include<conio.h>
 #include<stdlib.h>
@@ -12,93 +14,161 @@ int up5 = 0;//五星武器加角色总数
 int uptotal = 0;//总抽数
 int up6 = 0;//五星角色小保底计算
 int up7 = 0;//四星角色保底计算
-int san_xing[13] = { 0 };
-int si_xing[36] = { 0 };
-int si_xinghui[36] = { 0 };
-int si_xingwu[18] = { 0 };
-int wu_xing[8] = { 0 };
-int wu_xingwu[10] = { 0 };
-int wu_xinghui[8] = { 0 };
+int san_xing[13] = { 0 };//三星命座
+int si_xing[36] = { 0 };//四星角色（个数）命座
+int si_xinghui[36] = { 0 };//四星角色给的星辉
+int si_xingwu[18] = { 0 };//四星武器个数
+int wu_xing[8] = { 0 };//五星角色（个数）命座
+int wu_xingwu[10] = { 0 };//五星武器个数
+int wu_xinghui[8] = { 0 };//五星角色给的星辉
+int arr[9] = { 0 };//用来确定随机up
+
+//up的选取
+void up_cho()
+{
+	srand((unsigned)time(NULL));
+
+	arr[0] = rand() % 7 + 1;//五星up
+	arr[1] = rand() % 11 + 1;//四星up
+	arr[2] = rand() % 11 + 13;//四星up
+	arr[3] = rand() % 11 + 25;//四星up
+	arr[4] = rand() % 4 + 1;//五星武器
+	arr[5] = rand() % 4 + 5;//五星武器
+	arr[6] = rand() % 5 + 1;//四星武器
+	arr[7] = rand() % 5 + 7;//四星武器
+	arr[8] = rand() % 5 + 13;//四星武器
+	//这样调概率是为了不出现重复的up
+}
+
+//up池
 void menu()
 {
+
 	printf("原神抽卡模拟器：\n");
 	printf("---------------------------------------------------------------------\n");
-	printf("限定up池：                                             常驻池:\n");
-	printf("五星限定up:流浪者\n");
-	printf("四星up：烟绯，珐露珊，罗莎莉亚                              略\n");
+	printf("限定up池：                                             \n");
+	int currentIndex = 1;//当前读取的行
+	FILE* file5 = fopen("./files/up/5.txt", "r");
+	char ch_rank[20], en_rank[20], ch_name[20];
+	while (!feof(file5))
+	{
+		if (currentIndex == arr[0])//如果读到指定行就输出
+		{
+			fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+			printf("五星限定up:%s %s %s \n", ch_rank, en_rank, ch_name);
+			break;
+		}
+		fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+		currentIndex++;
+	}
+	fclose(file5);
+	//5星up
+
+	printf("四星up：                             \n");
+
+	FILE* file4r = fopen("./files/up/4r.txt", "r");
+	char c_rank[20], e_rank[20], c_name[20];
+	int cur = 1;//当前读取的行
+	while (!feof(file4r))
+	{
+		if (cur == arr[1])//如果读到指定行就输出
+		{
+			fscanf(file4r, "%s %s %s\n", c_rank, e_rank, c_name);
+			printf("%s %s %s \n", c_rank, e_rank, c_name);
+			break;
+		}
+		fscanf(file4r, "%s %s %s", c_rank, e_rank, c_name);
+		cur++;
+	}
+
+	rewind(file4r);
+	cur = 1;//当前读取的行变成第一行
+	while (!feof(file4r))
+	{
+		if (cur == arr[2])//如果读到指定行就输出
+		{
+			fscanf(file4r, "%s %s %s\n", c_rank, e_rank, c_name);
+			printf("%s %s %s \n", c_rank, e_rank, c_name);
+			break;
+		}
+		fscanf(file4r, "%s %s %s", c_rank, e_rank, c_name);
+		cur++;
+	}
+	rewind(file4r);
+	cur = 1;//当前读取的行变成第一行
+	while (!feof(file4r))
+	{
+		if (cur == arr[3])//如果读到指定行就输出
+		{
+			fscanf(file4r, "%s %s %s\n", c_rank, e_rank, c_name);
+			printf("%s %s %s \n", c_rank, e_rank, c_name);
+			break;
+		}
+		fscanf(file4r, "%s %s %s", c_rank, e_rank, c_name);
+		cur++;
+	}
+
+	fclose(file4r);
 	printf("---------------------------------------------------------------------\n");
 	printf("抽卡数：1  or  10\n");
 	printf("---------------------------------------------------------------------\n");
 	printf("退出exit(0)\n");
 }
+//改了up的生成
 void wuxing()
 {
+	FILE* file5 = fopen("./files/up/5.txt", "r");
+	rewind(file5);
 	if (up6 == 1)
 	{
-		printf("五星限定up ***** 流浪者");
-		if (wu_xing[7] != 0)
-			printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-		else
-			printf("\n");
-		wu_xing[7]++;
+		int currentIndex = 1;//当前读取的行
+		char ch_rank[20], en_rank[20], ch_name[20];
+		while (!feof(file5))
+		{
+			if (currentIndex == arr[0])//如果读到指定行就输出
+			{
+				fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+				printf("%s %s %s ", ch_rank, en_rank, ch_name);
+				if (wu_xing[arr[0]] != 0)
+					printf("   无主的星辉 +%d\n", wu_xinghui[arr[0]]);
+				else
+					printf("\n");
+				wu_xing[arr[0]]++;
+				break;
+			}
+			fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+			currentIndex++;
+		}
 		up6 = 0, up2 = 0, up1++, up5++, uptotal++;
 	}
+	//大保底
 	else
 	{
 		int wai = rand() % 13;
 		if (wai < 7)
 		{
-			switch (wai)
+			int wuwa = rand() % 7 + 1;
+			while (wuwa == arr[0])
+				wuwa = rand() % 7 + 1;
+			//避免随机刚好到up角色
+			rewind(file5);
+			int currentIndex = 1;//当前读取的行
+			while (!feof(file5))
 			{
-			case 0:printf("五星常驻up ***** 七七");
-				if (wu_xing[0] != 0)
-					printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-				else
-					printf("\n");
-				wu_xing[0]++;
-				break;
-			case 1:printf("五星常驻up ***** 迪卢克");
-				if (wu_xing[1] != 0)
-					printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-				else
-					printf("\n");
-				wu_xing[1]++;
-				break;
-			case 2:printf("五星常驻up ***** 莫娜");
-				if (wu_xing[2] != 0)
-					printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-				else
-					printf("\n");
-				wu_xing[2]++;
-				break;
-			case 3:printf("五星常驻up ***** 刻晴");
-				if (wu_xing[3] != 0)
-					printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-				else
-					printf("\n");
-				wu_xing[3]++;
-				break;
-			case 4:printf("五星常驻up ***** 琴");
-				if (wu_xing[4] != 0)
-					printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-				else
-					printf("\n");
-				wu_xing[4]++;
-				break;
-			case 5:printf("五星常驻up ***** 提纳里");
-				if (wu_xing[6] != 0)
-					printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-				else
-					printf("\n");
-				wu_xing[6]++;
-				break;
-			case 6:printf("五星常驻up ***** 迪希雅");
-				if (wu_xing[6] != 0)
-					printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-				else
-					printf("\n");
-				wu_xing[6]++;
-				break;
+				char ch_rank[20], en_rank[20], ch_name[20];
+				if (currentIndex == wuwa)//如果读到指定行就输出
+				{
+					fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+					printf("%s %s %s", ch_rank, en_rank, ch_name);
+					if (wu_xing[wuwa] != 0)
+						printf("   无主的星辉 +%d\n", wu_xinghui[wuwa]);
+					else
+						printf("\n");
+					wu_xing[wuwa]++;
+					break;
+				}
+				fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+				currentIndex++;
 			}
 			up1++;
 			up2 = 0;
@@ -106,407 +176,177 @@ void wuxing()
 			uptotal++;
 			up6 = 1;
 		}
+		//歪了其他五星
 		else
 		{
-			printf("五星限定up ***** 流浪者");
-			if (wu_xing[7] != 0)
-				printf("   无主的星辉 +%d\\n", wu_xinghui[0]);
-			else
-				printf("\n");
-			wu_xing[7]++;
+			int currentIndex = 1;//当前读取的行
+			char ch_rank[20], en_rank[20], ch_name[20];
+			while (!feof(file5))
+			{
+				if (currentIndex == arr[0])//如果读到指定行就输出
+				{
+					fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+					printf("%s %s %s", ch_rank, en_rank, ch_name);
+					if (wu_xing[arr[0]] != 0)
+						printf("   无主的星辉 +%d\n", wu_xinghui[arr[0]]);
+					else
+						printf("\n");
+					wu_xing[arr[0]]++;
+					break;
+				}
+				fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+				currentIndex++;
+			}
 			up1++;
 			up2 = 0;
 			up5++;
 			uptotal++;
 			up6 = 0;
 		}
+		//抽出up五星
+		fclose(file5);
 	}
 }
+//
 void sixing()
 {
-
 	int four = rand() % 13;
 	if (four < 7)
 	{
+		FILE* file4r = fopen("./files/up/4r.txt", "r");
 		if (up7 == 1)
 		{
-			int ab = rand() % 3;
-			switch (ab)
+			int ab = rand() % 2 + 1;//arr[1]-arr[3]随机一行
+			int currentIndex = 1;//当前读取的行
+			char ch_rank[20], en_rank[20], ch_name[20];
+			rewind(file4r);
+			while (!feof(file4r))
 			{
-			case 0:printf("四星角色 **** 烟绯");
-				if (si_xing[33] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[33]);
-				else
-					printf("\n");
-				si_xing[33]++;
-				break;
-			case 1:printf("四星角色 **** 罗莎莉亚");
-				if (si_xing[32] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[32]);
-				else
-					printf("\n");
-				si_xing[32]++;
-				break;
-			case 2:printf("四星角色 **** 珐露珊");
-				if (si_xing[30] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[30]);
-				else
-					printf("\n");
-				si_xing[30]++;
-				break;
+				if (currentIndex == arr[ab])//如果读到指定行就输出
+				{
+					fscanf(file4r, "%s %s %s", ch_rank, en_rank, ch_name);
+					printf("%s %s %s", ch_rank, en_rank, ch_name);
+					if (si_xing[arr[ab]] > 0)
+						printf("   无主的星辉 +%d\n", si_xinghui[arr[ab]]);
+					else
+						printf("\n");
+					si_xing[arr[ab]]++;
+					break;
+				}
+				fscanf(file4r, "%s %s %s", ch_rank, en_rank, ch_name);
+				currentIndex++;
 			}
 			up7 = 0;
 		}
+		//保底出up四星
 		else
 		{
-			int i = rand() % 13, m = rand() % 3;
+			int i = rand() % 13, m = rand() % 2 + 1;
 			if (i < 7)
 			{
-				switch (m)
+				rewind(file4r);
+				int currentIndex = 1;//当前读取的行
+				char ch_rank[20], en_rank[20], ch_name[20];
+				while (!feof(file4r))
 				{
-				case 0:printf("四星角色 **** 烟绯");
-					if (si_xing[33] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[33]);
-					printf("\n");
-
-					si_xing[33]++;
-					break;
-				case 1:printf("四星角色 **** 罗莎莉亚");
-					if (si_xing[32] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[32]);
-					printf("\n");
-					si_xing[32]++;
-					break;
-				case 2:printf("四星角色 **** 珐露珊");
-					if (si_xing[30] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[30]);
-					printf("\n");
-					si_xing[30]++;
-					break;
+					if (currentIndex == arr[m])//如果读到指定行就输出
+					{
+						fscanf(file4r, "%s %s %s ", ch_rank, en_rank, ch_name);
+						printf("%s %s %s", ch_rank, en_rank, ch_name);
+						if (si_xing[arr[m]] > 0)
+							printf("   无主的星辉 +%d\n", si_xinghui[arr[m]]);
+						else
+							printf("\n");
+						si_xing[arr[m]]++;
+						break;
+					}
+					fscanf(file4r, "%s %s %s", ch_rank, en_rank, ch_name);
+					currentIndex++;
 				}
 				up7 = 0;
 			}
+			//非保底出up四星
 			else
 			{
-				m = rand() % 33;
-				switch (m)
+				rewind(file4r);
+				m = rand() % 35 + 1;
+				while (m == arr[1] || m == arr[2] || m == arr[3])
+					m = rand() % 35 + 1;
+				//防止抽出up的4星
+				int currentIndex = 1;//当前读取的行
+				char ch_rank[20], en_rank[20], ch_name[20];
+				while (!feof(file4r))
 				{
-				case 0:printf("四星角色 **** 诺艾尔");
-					if (si_xing[0] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[0]);
-					else
-						printf("\n");
-					si_xing[0]++;
-					break;
-				case 1:printf("四星角色 **** 凝光");
-					if (si_xing[1] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[1]);
-					else
-						printf("\n");
-					si_xing[1]++;
-					break;
-				case 2:printf("四星角色 **** 云堇");
-					if (si_xing[2] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[2]);
-					else
-						printf("\n");
-					si_xing[2]++;
-					break;
-				case 3:printf("四星角色 **** 五郎");
-					if (si_xing[3] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[3]);
-					else
-						printf("\n");
-					si_xing[3]++;
-					break;
-				case 4:printf("四星角色 **** 辛焱");
-					if (si_xing[4] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[4]);
-					else
-						printf("\n");
-					si_xing[4]++;
-					break;
-				case 5:printf("四星角色 **** 班尼特");
-					if (si_xing[5] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[5]);
-					else
-						printf("\n");
-					si_xing[5]++;
-					break;
-				case 6:printf("四星角色 **** 香菱");
-					if (si_xing[6] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[6]);
-					else
-						printf("\n");
-					si_xing[6]++;
-					break;
-				case 7:printf("四星角色 **** 安柏");
-					if (si_xing[7] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[7]);
-					else
-						printf("\n");
-					si_xing[7]++;
-					break;
-				case 8:printf("四星角色 **** 托马");
-					if (si_xing[8] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[8]);
-					else
-						printf("\n");
-					si_xing[8]++;
-					break;
-				case 9:printf("四星角色 **** 重云");
-					if (si_xing[9] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[9]);
-					else
-						printf("\n");
-					si_xing[9]++;
-					break;
-				case 10:printf("四星角色 **** 凯亚");
-					if (si_xing[10] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[10]);
-					else
-						printf("\n");
-					si_xing[10]++;
-					break;
-				case 11:printf("四星角色 **** 迪奥娜");
-					if (si_xing[11] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[11]);
-					else
-						printf("\n");
-					si_xing[11]++;
-					break;
-				case 12:printf("四星角色 **** 米卡");
-					if (si_xing[12] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[12]);
-					else
-						printf("\n");
-					si_xing[12]++;
-					break;
-				case 13:printf("四星角色 **** 莱依拉");
-					if (si_xing[13] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[13]);
-					else
-						printf("\n");
-					si_xing[13]++;
-					break;
-				case 14:printf("四星角色 **** 砂糖");
-					if (si_xing[14] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[14]);
-					else
-						printf("\n");
-					si_xing[14]++;
-					break;
-				case 15:printf("四星角色 **** 早柚");
-					if (si_xing[15] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[15]);
-					else
-						printf("\n");
-					si_xing[15]++;
-					break;
-				case 16:printf("四星角色 **** 鹿野院平藏");
-					if (si_xing[16] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[16]);
-					else
-						printf("\n");
-					si_xing[16]++;
-					break;
-				case 17:printf("四星角色 **** 行秋");
-					if (si_xing[17] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[17]);
-					else
-						printf("\n");
-					si_xing[17]++;
-					break;
-				case 18:printf("四星角色 **** 芭芭拉");
-					if (si_xing[18] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[18]);
-					else
-						printf("\n");
-					si_xing[18]++;
-					break;
-				case 19:printf("四星角色 **** 坎蒂丝");
-					if (si_xing[19] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[19]);
-					else
-						printf("\n");
-					si_xing[19]++;
-					break;
-				case 20:printf("四星角色 **** 北斗");
-					if (si_xing[20] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[20]);
-					else
-						printf("\n");
-					si_xing[20]++;
-					break;
-				case 21:printf("四星角色 **** 菲谢尔");
-					if (si_xing[21] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[21]);
-					else
-						printf("\n");
-					si_xing[21]++;
-					break;
-				case 22:printf("四星角色 **** 雷泽");
-					if (si_xing[22] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[22]);
-					else
-						printf("\n");
-					si_xing[22]++;
-					break;
-				case 23:printf("四星角色 **** 丽莎");
-					if (si_xing[23] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[23]);
-					else
-						printf("\n");
-					si_xing[23]++;
-					break;
-				case 24:printf("四星角色 **** 九条裟罗");
-					if (si_xing[24] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[24]);
-					else
-						printf("\n");
-					si_xing[24]++;
-					break;
-				case 25:printf("四星角色 **** 多莉");
-					if (si_xing[25] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[25]);
-					else
-						printf("\n");
-					si_xing[25]++;
-					break;
-				case 26:printf("四星角色 **** 柯莱");
-					if (si_xing[26] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[26]);
-					else
-						printf("\n");
-					si_xing[26]++;
-					break;
-				case 27:printf("四星角色 **** 瑶瑶");
-					if (si_xing[27] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[27]);
-					else
-						printf("\n");
-					si_xing[27]++;
-					break;
-				case 28:printf("四星角色 **** 卡维");
-					if (si_xing[28] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[28]);
-					else
-						printf("\n");
-					si_xing[28]++;
-					break;
-				case 29:printf("四星角色 **** 绮良良");
-					if (si_xing[29] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[29]);
-					else
-						printf("\n");
-					si_xing[29]++;
-					break;
-				case 31:printf("四星角色 **** 久岐忍");
-					if (si_xing[31] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[31]);
-					else
-						printf("\n");
-					si_xing[31]++;
-					break;
-				case 32:printf("四星角色 **** 琳妮特");
-					if (si_xing[34] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[34]);
-					else
-						printf("\n");
-					si_xing[34]++;
-					break;
-				case 33:printf("四星角色 **** 菲米尼");
-					if (si_xing[35] != 0)
-						printf("   无主的星辉 +%d\n", si_xinghui[35]);
-					else
-						printf("\n");
-					si_xing[35]++;
-					break;
+					if (currentIndex == m)//如果读到指定行就输出
+					{
+						fscanf(file4r, "%s %s %s", ch_rank, en_rank, ch_name);
+						printf("%s %s %s ", ch_rank, en_rank, ch_name);
+						if (si_xing[m] > 0)
+							printf("   无主的星辉 +%d\n", si_xinghui[m]);
+						else
+							printf("\n");
+						si_xing[m]++;
+						break;
+					}
+					fscanf(file4r, "%s %s %s", ch_rank, en_rank, ch_name);
+					currentIndex++;
 				}
 				up7++;
 			}
+			//非保底出非up四星
 		}
+		fclose(file4r);
 	}
 	else
 	{
-		int n = rand() % 18;
-		switch (n)
+		int nchang = rand() % 17 + 1;
+		int currentIndex = 1;//当前读取的行
+		FILE* file4w = fopen("./files/武器/4w.txt", "r");
+		rewind(file4w);
+		char ch_rank[20], en_rank[20], ch_name[20];
+		while (!feof(file4w))
 		{
-		case 0:printf("四星武器 **** 弓藏   无主的星辉 +2\n"); si_xingwu[0]++;
-			break;
-		case 1:printf("四星武器 **** 祭礼弓   无主的星辉 +2\n"); si_xingwu[1]++;
-			break;
-		case 2:printf("四星武器 **** 绝弦   无主的星辉 +2\n"); si_xingwu[2]++;
-			break;
-		case 3:printf("四星武器 **** 西风猎弓   无主的星辉 +2\n"); si_xingwu[3]++;
-			break;
-		case 4:printf("四星武器 **** 昭心   无主的星辉 +2\n"); si_xingwu[4]++;
-			break;
-		case 5:printf("四星武器 **** 祭礼残章   无主的星辉 +2\n"); si_xingwu[5]++;
-			break;
-		case 6:printf("四星武器 **** 流浪乐章   无主的星辉 +2\n"); si_xingwu[6]++;
-			break;
-		case 7:printf("四星武器 **** 西风秘典   无主的星辉 +2\n"); si_xingwu[7]++;
-			break;
-		case 8:printf("四星武器 **** 西风长枪   无主的星辉 +2\n"); si_xingwu[8]++;
-			break;
-		case 9:printf("四星武器 **** 匣里灭辰   无主的星辉 +2\n"); si_xingwu[9]++;
-			break;
-		case 10:printf("四星武器 **** 雨裁   无主的星辉 +2\n"); si_xingwu[10]++;
-			break;
-		case 11:printf("四星武器 **** 祭礼大剑   无主的星辉 +2\n"); si_xingwu[11]++;
-			break;
-		case 12:printf("四星武器 **** 钟剑   无主的星辉 +2\n"); si_xingwu[12]++;
-			break;
-		case 13:printf("四星武器 **** 西风大剑   无主的星辉 +2\n"); si_xingwu[13]++;
-			break;
-		case 14:printf("四星武器 **** 匣里龙吟   无主的星辉 +2\n"); si_xingwu[14]++;
-			break;
-		case 15:printf("四星武器 **** 祭礼剑   无主的星辉 +2\n"); si_xingwu[15]++;
-			break;
-		case 16:printf("四星武器 **** 笛剑   无主的星辉 +2\n"); si_xingwu[16]++;
-			break;
-		case 17:printf("四星武器 **** 西风剑   无主的星辉 +2\n"); si_xingwu[17]++;
-			break;
+			if (currentIndex == nchang)//如果读到指定行就输出
+			{
+				si_xingwu[nchang]++;//记录数据
+				fscanf(file4w, "%s %s %s", ch_rank, en_rank, ch_name);
+				printf("%s %s %s 无主的星辉 +2\n", ch_rank, en_rank, ch_name);
+				break;
+			}
+			fscanf(file4w, "%s %s %s", ch_rank, en_rank, ch_name);
+			currentIndex++;
 		}
+
+		fclose(file4w);
 	}
 	up1 = 0;
 	up2++;
 	up4++;
 	uptotal++;
 }
+//
 void sanxing()
 {
-	int three = rand() % 13;
-	switch (three)
+	int three = rand() % 12 + 1;
+	int currentIndex = 1;//当前读取的行
+	FILE* file3 = fopen("./files/3.txt", "r");
+	rewind(file3);
+	char ch_rank[20], en_rank[20], ch_name[20];
+	while (!feof(file3))
 	{
-	case 0:printf("三星武器 *** 弹弓   无主的星尘 +15\n"); san_xing[0]++;
-		break;
-	case 1:printf("三星武器 *** 神射手之誓   无主的星尘 +15\n"); san_xing[1]++;
-		break;
-	case 2:printf("三星武器 *** 鸦羽弓   无主的星尘 +15\n"); san_xing[2]++;
-		break;
-	case 3:printf("三星武器 *** 翡玉法球   无主的星尘 +15\n"); san_xing[3]++;
-		break;
-	case 4:printf("三星武器 *** 讨龙英杰谭   无主的星尘 +15\n"); san_xing[4]++;
-		break;
-	case 5:printf("三星武器 *** 魔导绪论   无主的星尘 +15\n"); san_xing[5]++;
-		break;
-	case 6:printf("三星武器 *** 黑缨枪   无主的星尘 +15\n"); san_xing[6]++;
-		break;
-	case 7:printf("三星武器 *** 以理服人   无主的星尘 +15\n"); san_xing[7]++;
-		break;
-	case 8:printf("三星武器 *** 沐浴龙血的剑   无主的星尘 +15\n"); san_xing[8]++;
-		break;
-	case 9:printf("三星武器 *** 铁影阔剑   无主的星尘 +15\n"); san_xing[9]++;
-		break;
-	case 10:printf("三星武器 *** 飞天御剑   无主的星尘 +15\n"); san_xing[10]++;
-		break;
-	case 11:printf("三星武器 *** 黎明神剑   无主的星尘 +15\n"); san_xing[11]++;
-		break;
-	case 12:printf("三星武器 *** 冷刃   无主的星尘 +15\n"); san_xing[12]++;
-		break;
+		if (currentIndex == three)//如果读到指定行就输出
+		{
+			san_xing[three]++;
+			fscanf(file3, "%s %s %s", ch_rank, en_rank, ch_name);
+			printf("%s %s %s 无主的星尘 +15\n", ch_rank, en_rank, ch_name);
+			break;
+		}
+		fscanf(file3, "%s %s %s", ch_rank, en_rank, ch_name);
+		currentIndex++;
 	}
+
+	fclose(file3);
+
 	up1++;
 	up2++;
 	up3++;
@@ -627,36 +467,44 @@ void upchou()
 		}
 		else if (x == 10)
 		{
-			for (int i = 0; i < x; i++)
+			start();
+			if ((jiu_chan + yuan_shi / 160 + xing_chen / 75 + xing_hui / 5) < 10)
+				printf("充钱吧，少年\n");
+			else
 			{
-				start();
-				if (x <= jiu_chan)
+				for (int i = 0; i < x; i++)
 				{
-					one();
-				}
-				else if (yuan_shi >= 160)
-				{
-					jiu_chan += 1;
-					yuan_shi -= 160;
-					one();
-				}
-				else if (xing_chen >= 75)
-				{
-					jiu_chan += 1;
-					xing_chen0 -= 75;
-					one();
-				}
-				else if (xing_hui >= 5)
-				{
-					jiu_chan += 1;
-					xing_hui0 -= 5;
-					one();
+					if (1 <= jiu_chan)
+					{
+						one();
+						Sleep(100);
+					}
+					else if (yuan_shi >= 160)
+					{
+						jiu_chan += 1;
+						yuan_shi -= 160;
+						one();
+						Sleep(100);
+					}
+					else if (xing_chen >= 75)
+					{
+						jiu_chan += 1;
+						xing_chen0 -= 75;
+						one();
+						Sleep(100);
+					}
+					else if (xing_hui >= 5)
+					{
+						jiu_chan += 1;
+						xing_hui0 -= 5;
+						one();
+						Sleep(100);
+					}
 				}
 			}
-		    if (jiu_chan < 1 && yuan_shi < 160 && xing_chen < 75 && xing_hui < 5)
-			printf("充钱吧，少年\n");
+			start();
 		}
-		 if (x == 0)
+		if (x == 0)
 		{
 			printf("总共抽取%d抽\n", uptotal);
 			printf("五星共%d个\n", up5);
@@ -667,58 +515,125 @@ void upchou()
 			{
 				choukache();
 			}
-			}
+		}
 		system("pause");
 		system("cls");
 	}
 }
 int w1 = 0, w2 = 0, w3 = 0, w4 = 0, w5 = 0, w6 = 0, w7 = 0, wtotal = 0;
+
+//武器池
 void menuwu()
 {
 	printf("武器池:\n");
 	printf("---------------------------------------------------------------------\n");
+	int currentIndex = 1;//当前读取的行
+	FILE* file5 = fopen("./files/武器/5.txt", "r");
+	char ch_rank[20], en_rank[20], ch_name[20];
+	printf("五星武器限定up:\n");
+
+	while (!feof(file5))
+	{
+		if (currentIndex == arr[4])//如果读到指定行就输出
+		{
+			fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+			printf("%s %s %s \n", ch_rank, en_rank, ch_name);
+			break;
+		}
+		fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+		currentIndex++;
+	}
+
+	currentIndex = 1;
+	while (1)
+	{
+		if (currentIndex == arr[5])//如果读到指定行就输出
+		{
+			fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+			printf("%s %s %s \n", ch_rank, en_rank, ch_name);
+			break;
+		}
+		fscanf(file5, "%s %s %s", ch_rank, en_rank, ch_name);
+		currentIndex++;
+	}
+
+	fclose(file5);
+	//5星up
+
+	printf("四星武器up:\n");
+
+	FILE* file4w = fopen("./files/武器/4w.txt", "r");
+	char c_rank[20], e_rank[20], c_name[20];
+	for (int i = 6; i == 6 || i == 7 || i == 8; i++)
+	{
+		rewind(file4w);
+		int cur = 1;//当前读取的行
+		while (1)
+		{
+			if (cur == arr[i])//如果读到指定行就输出
+			{
+				fscanf(file4w, "%s %s %s\n", c_rank, e_rank, c_name);
+				printf("%s %s %s \n", c_rank, e_rank, c_name);
+				break;
+			}
+			fscanf(file4w, "%s %s %s", c_rank, e_rank, c_name);
+			cur++;
+		}
+	}
+	fclose(file4w);
+	//4星up
+
 	printf("抽卡数：1  or  10\n");
 	printf("---------------------------------------------------------------------\n");
 	printf("退出exit(0)\n");
 }
+//武器up展示
 void wuxingwu()
 {
+	FILE* file5w = fopen("./files/武器/5.txt", "r");
+	rewind(file5w);
 	if (w6 == 1)
 	{
-		int wufive = rand() % 2;
-		switch (wufive)
+		int currentIndex = 1;//当前读取的行
+		int wufive = rand() % 1 + 4;
+		char ch_rank[20], en_rank[20], ch_name[20];
+		while (!feof(file5w))
 		{
-		case 0:printf("五星武器 ***** 阿莫斯之弓   无主的星辉 +10 \n");
-			break;
-		case 1:printf("五星武器 ***** 图莱杜拉的回忆   无主的星辉 +10\n");
-			break;
+			if (currentIndex == arr[wufive])//如果读到指定行就输出
+			{
+				wu_xingwu[arr[wufive]]++;
+				fscanf(file5w, "%s %s %s", ch_rank, en_rank, ch_name);
+				printf("%s %s %s 无主的星辉 +10\n", ch_rank, en_rank, ch_name);
+				break;
+			}
+			fscanf(file5w, "%s %s %s", ch_rank, en_rank, ch_name);
+			currentIndex++;
 		}
+
 		w6 = 0, w1++, w2 = 0, wtotal++, w5++;
 	}
+	//保底五星up
 	else
 	{
 		int wai = rand() % 100;
 		if (wai < 25)
 		{
-			int wufivewai = rand() % 8;
-			switch (wufivewai)
+			int wufivewai = rand() % 7 + 1;
+			while (wufivewai == arr[4] || wufivewai == arr[5])
+				wufivewai = rand() % 7 + 1;
+			int currentIndex = 1;//当前读取的行
+			char ch_rank[20], en_rank[20], ch_name[20];
+			while (!feof(file5w))
 			{
-			case 0:printf("五星武器 ***** 和璞鸢   无主的星辉 +10\n"); wu_xingwu[0]++;
-				break;
-			case 1:printf("五星武器 ***** 狼的末路   无主的星辉 +10\n"); wu_xingwu[1]++;
-				break;
-			case 2:printf("五星武器 ***** 风鹰剑   无主的星辉 +10\n"); wu_xingwu[2]++;
-				break;
-			case 3:printf("五星武器 ***** 四风原典   无主的星辉 +10\n"); wu_xingwu[3]++;
-				break;
-			case 4:printf("五星武器 ***** 天空之傲   无主的星辉 +10\n"); wu_xingwu[4]++;
-				break;
-			case 5:printf("五星武器 ***** 天空之翼   无主的星辉 +10\n"); wu_xingwu[5]++;
-				break;
-			case 6:printf("五星武器 ***** 天空之刃   无主的星辉 +10\n"); wu_xingwu[6]++;
-				break;
-			case 7:printf("五星武器 ***** 天空之卷   无主的星辉 +10\n"); wu_xingwu[7]++;
-				break;
+				if (currentIndex == wufivewai)//如果读到指定行就输出
+				{
+					wu_xingwu[wufivewai]++;
+					fscanf(file5w, "%s %s %s", ch_rank, en_rank, ch_name);
+					printf("%s %s %s 无主的星辉 +10\n", ch_rank, en_rank, ch_name);
+					break;
+				}
+				fscanf(file5w, "%s %s %s", ch_rank, en_rank, ch_name);
+				currentIndex++;
 			}
 			w6++;
 			w1++;
@@ -726,43 +641,80 @@ void wuxingwu()
 			wtotal++;
 			w5++;
 		}
+		//歪非up武器
 		else
 		{
 			int wuqi = rand() % 13;
 			if (wuqi < 7)
 			{
-				printf("五星武器 ***** 阿莫斯之弓\n");
+				int currentIndex = 1;//当前读取的行
+				char ch_rank[20], en_rank[20], ch_name[20];
+				while (!feof(file5w))
+				{
+					if (currentIndex == arr[4])//如果读到指定行就输出
+					{
+						wu_xingwu[arr[4]]++;
+						fscanf(file5w, "%s %s %s", ch_rank, en_rank, ch_name);
+						printf("%s %s %s 无主的星辉 +10\n", ch_rank, en_rank, ch_name);
+						break;
+					}
+					fscanf(file5w, "%s %s %s", ch_rank, en_rank, ch_name);
+					currentIndex++;
+				}
 			}
 			else
 			{
-				printf("五星武器 ***** 图莱杜拉的回忆\n");
+
+				int currentIndex = 1;//当前读取的行
+				char ch_rank[20], en_rank[20], ch_name[20];
+				while (!feof(file5w))
+				{
+					if (currentIndex == arr[5])//如果读到指定行就输出
+					{
+						wu_xingwu[arr[5]]++;
+						fscanf(file5w, "%s %s %s", ch_rank, en_rank, ch_name);
+						printf("%s %s %s 无主的星辉 +10\n", ch_rank, en_rank, ch_name);
+						break;
+					}
+					fscanf(file5w, "%s %s %s", ch_rank, en_rank, ch_name);
+					currentIndex++;
+				}
+				w1++;
+				w2 = 0;
+				w5++;
+				wtotal++;
+				w6 = 0;
 			}
-			w1++;
-			w2 = 0;
-			w5++;
-			wtotal++;
-			w6 = 0;
 		}
+		fclose(file5w);
 	}
 }
+//
 void sixingwu()
 {
+	FILE* file4w = fopen("./files/武器/4w.txt", "r");
+	rewind(file4w);
 	if (w7 == 1)
 	{
-		int wufive = rand() % 4;
-		switch (wufive)
+		int wufive = rand() % 2 + 6;
+		char ch_rank[20], en_rank[20], ch_name[20];
+		int currentIndex = 1;
+		rewind(file4w);
+		while (!feof(file4w))
 		{
-		case 0:printf("四星武器 **** 祭礼剑   无主的星辉 +2\n"); si_xingwu[15]++;
-			break;
-		case 1:printf("四星武器 **** 匣里灭辰   无主的星辉 +2\n"); si_xingwu[9]++;
-			break;
-		case 2:printf("四星武器 **** 西风剑   无主的星辉 +2\n"); si_xingwu[17]++;
-			break;
-		case 3:printf("四星武器 **** 昭心   无主的星辉 +2\n"); si_xingwu[4]++;
-			break;
+			if (currentIndex == arr[wufive])//如果读到指定行就输出
+			{
+				si_xingwu[arr[wufive]]++;//记录数据
+				fscanf(file4w, "%s %s %s", ch_rank, en_rank, ch_name);
+				printf("%s %s %s 无主的星辉 +2\n", ch_rank, en_rank, ch_name);
+				break;
+			}
+			fscanf(file4w, "%s %s %s", ch_rank, en_rank, ch_name);
+			currentIndex++;
 		}
 		w7 = 0, w1 = 0, w2++, wtotal++, w4++;
 	}
+	//保底4星up
 	else
 	{
 		int four = rand() % 13;
@@ -771,364 +723,109 @@ void sixingwu()
 			int fourwai = rand() % 100;
 			if (fourwai < 75)
 			{
-				int fourbu = rand() % 4;
-				switch (fourbu)
+				int fourbu = rand() % 2 + 6;
+				char ch_rank[20], en_rank[20], ch_name[20];
+				int currentIndex = 1;
+				rewind(file4w);
+				while (!feof(file4w))
 				{
-				case 0:printf("四星武器 **** 祭礼剑   无主的星辉 +2\n"); si_xingwu[15]++;
-					break;
-				case 1:printf("四星武器 **** 匣里灭辰   无主的星辉 +2\n"); si_xingwu[9]++;
-					break;
-				case 2:printf("四星武器 **** 西风剑   无主的星辉 +2\n"); si_xingwu[17]++;
-					break;
-				case 3:printf("四星武器 **** 昭心   无主的星辉 +2\n"); si_xingwu[4]++;
-					break;
+					if (currentIndex == arr[fourbu])//如果读到指定行就输出
+					{
+						si_xingwu[arr[fourbu]]++;//记录数据
+						fscanf(file4w, "%s %s %s", ch_rank, en_rank, ch_name);
+						printf("%s %s %s 无主的星辉 +2\n", ch_rank, en_rank, ch_name);
+						break;
+					}
+					fscanf(file4w, "%s %s %s", ch_rank, en_rank, ch_name);
+					currentIndex++;
 				}
 				w1 = 0, w2++, w4++, wtotal++, w7 = 0;
 			}
+			//非保底4星upc
 			else
 			{
-				fourwai = rand() % 14;
-				switch (fourwai)
+				fourwai = rand() % 17 + 1;
+				while (fourwai == arr[6] || fourwai == arr[7] || fourwai == arr[8])
+					fourwai = rand() % 17 + 1;
+				//如果又抽到up的就重新生成
+
+				char ch_rank[20], en_rank[20], ch_name[20];
+				int currentIndex = 1;
+				rewind(file4w);
+				while (!feof(file4w))
 				{
-				case 0:printf("四星武器 **** 弓藏   无主的星辉 +2\n"); si_xingwu[0]++;
-					break;
-				case 1:printf("四星武器 **** 祭礼弓   无主的星辉 +2\n"); si_xingwu[1]++;
-					break;
-				case 2:printf("四星武器 **** 绝弦   无主的星辉 +2\n"); si_xingwu[2]++;
-					break;
-				case 3:printf("四星武器 **** 西风猎弓   无主的星辉 +2\n"); si_xingwu[3]++;
-					break;
-				case 4:printf("四星武器 **** 昭心   无主的星辉 +2\n"); si_xingwu[4]++;
-					break;
-				case 5:printf("四星武器 **** 祭礼残章   无主的星辉 +2\n"); si_xingwu[5]++;
-					break;
-				case 6:printf("四星武器 **** 流浪乐章   无主的星辉 +2\n"); si_xingwu[6]++;
-					break;
-				case 7:printf("四星武器 **** 西风秘典   无主的星辉 +2\n"); si_xingwu[7]++;
-					break;
-				case 8:printf("四星武器 **** 西风长枪   无主的星辉 +2\n"); si_xingwu[8]++;
-					break;
-				case 9:printf("四星武器 **** 匣里灭辰   无主的星辉 +2\n"); si_xingwu[9]++;
-					break;
-				case 10:printf("四星武器 **** 雨裁   无主的星辉 +2\n"); si_xingwu[10]++;
-					break;
-				case 11:printf("四星武器 **** 祭礼大剑   无主的星辉 +2\n"); si_xingwu[11]++;
-					break;
-				case 12:printf("四星武器 **** 钟剑   无主的星辉 +2\n"); si_xingwu[12]++;
-					break;
-				case 13:printf("四星武器 **** 西风大剑   无主的星辉 +2\n"); si_xingwu[13]++;
-					break;
-				case 14:printf("四星武器 **** 匣里龙吟   无主的星辉 +2\n"); si_xingwu[14]++;
-					break;
-				case 15:printf("四星武器 **** 祭礼剑   无主的星辉 +2\n"); si_xingwu[15]++;
-					break;
-				case 16:printf("四星武器 **** 笛剑   无主的星辉 +2\n"); si_xingwu[16]++;
-					break;
-				case 17:printf("四星武器 **** 西风剑   无主的星辉 +2\n"); si_xingwu[17]++;
-					break;
+					if (currentIndex == fourwai)//如果读到指定行就输出
+					{
+						si_xingwu[fourwai]++;//记录数据
+						fscanf(file4w, "%s %s %s", ch_rank, en_rank, ch_name);
+						printf("%s %s %s 无主的星辉 +2\n", ch_rank, en_rank, ch_name);
+						break;
+					}
+					fscanf(file4w, "%s %s %s", ch_rank, en_rank, ch_name);
+					currentIndex++;
 				}
 				w1 = 0, w2++, w4++, wtotal++, w7++;
 			}
 		}
 		else
 		{
-			int fourj = rand() % 30;
-			switch (fourj)
+			int mchang = rand() % 35 + 1;
+			int currentIndex = 1;//当前读取的行
+
+			FILE* file4r = fopen("./files/武器/4r.txt", "r");
+			rewind(file4r);
+			char ch_rank[20], en_rank[20], ch_name[20];
+			while (!feof(file4r))
 			{
-			case 0:printf("四星角色 **** 诺艾尔");
-				if (si_xing[0] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[0]);
-				else
-					printf("\n");
-				si_xing[0]++;
-				break;
-			case 1:printf("四星角色 **** 凝光");
-				if (si_xing[1] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[1]);
-				else
-					printf("\n");
-				si_xing[1]++;
-				break;
-			case 2:printf("四星角色 **** 云堇");
-				if (si_xing[2] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[2]);
-				else
-					printf("\n");
-				si_xing[2]++;
-				break;
-			case 3:printf("四星角色 **** 五郎");
-				if (si_xing[3] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[3]);
-				else
-					printf("\n");
-				si_xing[3]++;
-				break;
-			case 4:printf("四星角色 **** 辛焱");
-				if (si_xing[4] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[4]);
-				else
-					printf("\n");
-				si_xing[4]++;
-				break;
-			case 5:printf("四星角色 **** 班尼特");
-				if (si_xing[5] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[5]);
-				else
-					printf("\n");
-				si_xing[5]++;
-				break;
-			case 6:printf("四星角色 **** 香菱");
-				if (si_xing[6] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[6]);
-				else
-					printf("\n");
-				si_xing[6]++;
-				break;
-			case 7:printf("四星角色 **** 安柏");
-				if (si_xing[7] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[7]);
-				else
-					printf("\n");
-				si_xing[7]++;
-				break;
-			case 8:printf("四星角色 **** 托马");
-				if (si_xing[8] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[8]);
-				else
-					printf("\n");
-				si_xing[8]++;
-				break;
-			case 9:printf("四星角色 **** 重云");
-				if (si_xing[9] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[9]);
-				else
-					printf("\n");
-				si_xing[9]++;
-				break;
-			case 10:printf("四星角色 **** 凯亚");
-				if (si_xing[10] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[10]);
-				else
-					printf("\n");
-				si_xing[10]++;
-				break;
-			case 11:printf("四星角色 **** 迪奥娜");
-				if (si_xing[11] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[11]);
-				else
-					printf("\n");
-				si_xing[11]++;
-				break;
-			case 12:printf("四星角色 **** 米卡");
-				if (si_xing[12] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[12]);
-				else
-					printf("\n");
-				si_xing[12]++;
-				break;
-			case 13:printf("四星角色 **** 莱依拉");
-				if (si_xing[13] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[13]);
-				else
-					printf("\n");
-				si_xing[13]++;
-				break;
-			case 14:printf("四星角色 **** 砂糖");
-				if (si_xing[14] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[14]);
-				else
-					printf("\n");
-				si_xing[14]++;
-				break;
-			case 15:printf("四星角色 **** 早柚");
-				if (si_xing[15] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[15]);
-				else
-					printf("\n");
-				si_xing[15]++;
-				break;
-			case 16:printf("四星角色 **** 鹿野院平藏");
-				if (si_xing[16] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[16]);
-				else
-					printf("\n");
-				si_xing[16]++;
-				break;
-			case 17:printf("四星角色 **** 行秋");
-				if (si_xing[17] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[17]);
-				else
-					printf("\n");
-				si_xing[17]++;
-				break;
-			case 18:printf("四星角色 **** 芭芭拉");
-				if (si_xing[18] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[18]);
-				else
-					printf("\n");
-				si_xing[18]++;
-				break;
-			case 19:printf("四星角色 **** 坎蒂丝");
-				if (si_xing[19] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[19]);
-				else
-					printf("\n");
-				si_xing[19]++;
-				break;
-			case 20:printf("四星角色 **** 北斗");
-				if (si_xing[20] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[20]);
-				else
-					printf("\n");
-				si_xing[20]++;
-				break;
-			case 21:printf("四星角色 **** 菲谢尔");
-				if (si_xing[21] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[21]);
-				else
-					printf("\n");
-				si_xing[21]++;
-				break;
-			case 22:printf("四星角色 **** 雷泽");
-				if (si_xing[22] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[22]);
-				else
-					printf("\n");
-				si_xing[22]++;
-				break;
-			case 23:printf("四星角色 **** 丽莎");
-				if (si_xing[23] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[23]);
-				else
-					printf("\n");
-				si_xing[23]++;
-				break;
-			case 24:printf("四星角色 **** 九条裟罗");
-				if (si_xing[24] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[24]);
-				else
-					printf("\n");
-				si_xing[24]++;
-				break;
-			case 25:printf("四星角色 **** 多莉");
-				if (si_xing[25] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[25]);
-				else
-					printf("\n");
-				si_xing[25]++;
-				break;
-			case 26:printf("四星角色 **** 柯莱");
-				if (si_xing[26] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[26]);
-				else
-					printf("\n");
-				si_xing[26]++;
-				break;
-			case 27:printf("四星角色 **** 瑶瑶");
-				if (si_xing[27] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[27]);
-				else
-					printf("\n");
-				si_xing[27]++;
-				break;
-			case 28:printf("四星角色 **** 卡维");
-				if (si_xing[28] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[28]);
-				else
-					printf("\n");
-				si_xing[28]++;
-				break;
-			case 29:printf("四星角色 **** 绮良良");
-				if (si_xing[29] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[29]);
-				else
-					printf("\n");
-				si_xing[29]++;
-				break;
-			case 30:printf("四星角色 **** 珐露珊");
-				if (si_xing[30] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[30]);
-				else
-					printf("\n");
-				si_xing[30]++;
-				break;
-			case 31:printf("四星角色 **** 久岐忍");
-				if (si_xing[31] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[31]);
-				else
-					printf("\n");
-				si_xing[31]++;
-				break;
-			case 32:printf("四星角色 **** 罗莎莉亚");
-				if (si_xing[32] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[32]);
-				else
-					printf("\n");
-				si_xing[32]++;
-				break;
-			case 33:printf("四星角色 **** 烟绯");
-				if (si_xing[33] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[33]);
-				else
-					printf("\n");
-				si_xing[33]++;
-				break;
-			case 34:printf("四星角色 **** 琳妮特");
-				if (si_xing[34] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[34]);
-				else
-					printf("\n");
-				si_xing[34]++;
-				break;
-			case 35:printf("四星角色 **** 菲米尼");
-				if (si_xing[35] != 0)
-					printf("   无主的星辉 +%d\n", si_xinghui[35]);
-				else
-					printf("\n");
-				si_xing[35]++;
-				break;
+				if (currentIndex == mchang)//如果读到指定行就输出
+				{
+					fscanf(file4r, "%s %s %s", ch_rank, en_rank, ch_name);
+					printf("%s %s %s", ch_rank, en_rank, ch_name);
+					if (si_xing[mchang] > 0)
+						printf("   无主的星辉 +%d\n", si_xinghui[mchang]);
+					else
+						printf("\n");
+					si_xing[mchang]++;
+					break;
+				}
+				fscanf(file4r, "%s %s %s", ch_rank, en_rank, ch_name);
+				currentIndex++;
 			}
 			w1 = 0, w2++, w4++, wtotal++;
+			fclose(file4r);
 		}
 	}
+	fclose(file4w);
 }
+//
 void sanxingwu()
 {
-	int three = rand() % 13;
-	switch (three)
+	int three = rand() % 12 + 1;//指定要读取的行
+	int currentIndex = 1;//当前读取的行
+	FILE* file3 = fopen("./files/3.txt", "r");
+	rewind(file3);
+	char ch_rank[20], en_rank[20], ch_name[20];
+	while (!feof(file3))
 	{
-	case 0:printf("三星武器 *** 弹弓   无主的星尘 +15\n"); san_xing[0]++;
-		break;
-	case 1:printf("三星武器 *** 神射手之誓   无主的星尘 +15\n"); san_xing[1]++;
-		break;
-	case 2:printf("三星武器 *** 鸦羽弓   无主的星尘 +15\n"); san_xing[2]++;
-		break;
-	case 3:printf("三星武器 *** 翡玉法球   无主的星尘 +15\n"); san_xing[3]++;
-		break;
-	case 4:printf("三星武器 *** 讨龙英杰谭   无主的星尘 +15\n"); san_xing[4]++;
-		break;
-	case 5:printf("三星武器 *** 魔导绪论   无主的星尘 +15\n"); san_xing[5]++;
-		break;
-	case 6:printf("三星武器 *** 黑缨枪   无主的星尘 +15\n"); san_xing[6]++;
-		break;
-	case 7:printf("三星武器 *** 以理服人   无主的星尘 +15\n"); san_xing[7]++;
-		break;
-	case 8:printf("三星武器 *** 沐浴龙血的剑   无主的星尘 +15\n"); san_xing[8]++;
-		break;
-	case 9:printf("三星武器 *** 铁影阔剑   无主的星尘 +15\n"); san_xing[9]++;
-		break;
-	case 10:printf("三星武器 *** 飞天御剑   无主的星尘 +15\n"); san_xing[10]++;
-		break;
-	case 11:printf("三星武器 *** 黎明神剑   无主的星尘 +15\n"); san_xing[11]++;
-		break;
-	case 12:printf("三星武器 *** 冷刃   无主的星尘 +15\n"); san_xing[12]++;
-		break;
+		if (currentIndex == three)//如果读到指定行就输出
+		{
+			san_xing[three]++;
+			fscanf(file3, "%s %s %s", ch_rank, en_rank, ch_name);
+			printf("%s %s %s 无主的星尘 +15\n", ch_rank, en_rank, ch_name);
+			break;
+		}
+		fscanf(file3, "%s %s %s", ch_rank, en_rank, ch_name);
+		currentIndex++;
 	}
+
+	fclose(file3);
+
 	w1++;
 	w2++;
 	w3++;
 	wtotal++;
 }
+//
 void onewu()
 {
 	int wu = rand() % 10000;
@@ -1245,36 +942,43 @@ void wuchou()
 		}
 		else if (x == 10)
 		{
-			for (int i = 0; i < 10; i++)
+			if ((jiu_chan + yuan_shi / 160 + xing_chen / 75 + xing_hui / 5) < 10)
+				printf("充钱吧，少年\n");
+			else
 			{
-				start();
-				if (x <= jiu_chan)
+				for (int i = 0; i < 10; i++)
 				{
-					onewu();
-				}
-				else if (yuan_shi >= 160)
-				{
-					jiu_chan += 1;
-					yuan_shi -= 160;
-					onewu();
-				}
-				else if (xing_chen >= 75)
-				{
-					jiu_chan += 1;
-					xing_chen0 -= 75;
-					onewu();
-				}
-				else if (xing_hui >= 5)
-				{
-					jiu_chan += 1;
-					xing_hui0 -= 5;
-					onewu();
+					if (1 <= jiu_chan)
+					{						
+						onewu();				
+						Sleep(100);
+					}
+					else if (yuan_shi >= 160)
+					{
+						jiu_chan += 1;
+						yuan_shi -= 160;
+						onewu();
+						Sleep(100);
+					}
+					else if (xing_chen >= 75)
+					{
+						jiu_chan += 1;
+						xing_chen0 -= 75;
+						onewu();
+						Sleep(100);
+					}
+					else if (xing_hui >= 5)
+					{
+						jiu_chan += 1;
+						xing_hui0 -= 5;
+						onewu();
+						Sleep(100);
+					}
 				}
 			}
-			if (jiu_chan < 1 && yuan_shi < 160 && xing_chen < 75 && xing_hui < 5)
-				printf("充钱吧，少年\n");
+			start();
 		}
-		 if (x == 0)
+		if (x == 0)
 		{
 			printf("总共抽取%d抽\n", wtotal);
 			printf("五星共%d个\n", w5);
@@ -1291,6 +995,8 @@ void wuchou()
 	}
 }
 int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, ctotal = 0;
+
+//常驻池
 void menuchang()
 {
 	printf("常驻池:\n");
@@ -1304,436 +1010,149 @@ void wuxingchangzhu()
 	int five = rand() % 13;
 	if (five < 7)
 	{
-		int mwu = rand() % 7;
-		switch (mwu)
+		int mwu = rand() % 6 + 1;
+		int currentIndex = 1;//当前读取的行
+
+		FILE* file5r = fopen("./files/常驻/5r.txt", "r");
+		rewind(file5r);
+		char ch_rank[20], en_rank[20], ch_name[20];
+		while (!feof(file5r))
 		{
-		case 0:printf("五星常驻up ***** 七七");
-		if (wu_xing[0] != 0)
-			printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-		else
-			printf("\n");
-		wu_xing[0]++;
-		break;
-		case 1:printf("五星常驻up ***** 迪卢克");
-			if (wu_xing[1] != 0)
-				printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-			else
-				printf("\n");
-			wu_xing[1]++;
-			break;
-		case 2:printf("五星常驻up ***** 莫娜");
-			if (wu_xing[2] != 0)
-				printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-			else
-				printf("\n");
-			wu_xing[2]++;
-			break;
-		case 3:printf("五星常驻up ***** 刻晴");
-			if (wu_xing[3] != 0)
-				printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-			else
-				printf("\n");
-			wu_xing[3]++;
-			break;
-		case 4:printf("五星常驻up ***** 琴");
-			if (wu_xing[4] != 0)
-				printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-			else
-				printf("\n");
-			wu_xing[4]++;
-			break;
-		case 5:printf("五星常驻up ***** 提纳里");
-			if (wu_xing[6] != 0)
-				printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-			else
-				printf("\n");
-			wu_xing[6]++;
-			break;
-		case 6:printf("五星常驻up ***** 迪希雅");
-			if (wu_xing[6] != 0)
-				printf("   无主的星辉 +%d\n", wu_xinghui[0]);
-			else
-				printf("\n");
-			wu_xing[6]++;
-			break;
+			if (currentIndex == mwu)//如果读到指定行就输出
+			{
+				fscanf(file5r, "%s %s %s", ch_rank, en_rank, ch_name);
+				printf("%s %s %s", ch_rank, en_rank, ch_name);
+				if (wu_xing[mwu] != 0)
+					printf("   无主的星辉 +%d\n", wu_xinghui[mwu]);
+				else
+					printf("\n");
+				wu_xing[mwu]++;
+				break;
+			}
+			fscanf(file5r, "%s %s %s", ch_rank, en_rank, ch_name);
+			currentIndex++;
 		}
+
+		fclose(file5r);
 	}
 	else
 	{
-		int nwu = rand() % 9;
-		switch (nwu)
+		int nwu = rand() % 8 + 1;
+		int currentIndex = 1;//当前读取的行
+
+		FILE* file5w = fopen("./files/常驻/5w.txt", "r");
+		rewind(file5w);
+
+		char ch_rank[20], en_rank[20], ch_name[20];
+		while (!feof(file5w))
 		{
-		case 0:printf("五星武器 ***** 和璞鸢   无主的星辉 +10\n"); wu_xingwu[0]++;
-			break;
-		case 1:printf("五星武器 ***** 狼的末路   无主的星辉 +10\n"); wu_xingwu[1]++;
-			break;
-		case 2:printf("五星武器 ***** 风鹰剑   无主的星辉 +10\n"); wu_xingwu[2]++;
-			break;
-		case 3:printf("五星武器 ***** 四风原典   无主的星辉 +10\n"); wu_xingwu[3]++;
-			break;
-		case 4:printf("五星武器 ***** 天空之傲   无主的星辉 +10\n"); wu_xingwu[4]++;
-			break;
-		case 5:printf("五星武器 ***** 天空之翼   无主的星辉 +10\n"); wu_xingwu[5]++;
-			break;
-		case 6:printf("五星武器 ***** 天空之刃   无主的星辉 +10\n"); wu_xingwu[6]++;
-			break;
-		case 7:printf("五星武器 ***** 天空之卷   无主的星辉 +10\n"); wu_xingwu[7]++;
-			break;
+			if (currentIndex == nwu)//如果读到指定行就输出
+			{
+				wu_xingwu[nwu]++;
+				fscanf(file5w, "%s %s %s", ch_rank, en_rank, ch_name);
+				printf("%s %s %s 无主的星辉 +10\n", ch_rank, en_rank, ch_name);
+				break;
+			}
+			fscanf(file5w, "%s %s %s", ch_rank, en_rank, ch_name);
+			currentIndex++;
 		}
+
+		fclose(file5w);
+
 	}
 	c1++;
 	c2 = 0;
 	c5++;
 	ctotal++;
 }
+//
 void sixingchangzhu()
 {
 	int fourchang = rand() % 13;
 	if (fourchang < 7)
 	{
-		int mchang = rand() % 36;
-		switch (mchang)
+		int mchang = rand() % 35 + 1;
+		int currentIndex = 1;//当前读取的行
+
+		FILE* file4r = fopen("./files/常驻/4r.txt", "r");
+		rewind(file4r);
+		char ch_rank[20], en_rank[20], ch_name[20];
+		while (!feof(file4r))
 		{
-		case 0:printf("四星角色 **** 诺艾尔");
-			if (si_xing[0] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[0]);
-			else
-				printf("\n");
-			si_xing[0]++;
-			break;
-		case 1:printf("四星角色 **** 凝光");
-			if (si_xing[1] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[1]);
-			else
-				printf("\n");
-			si_xing[1]++;
-			break;
-		case 2:printf("四星角色 **** 云堇");
-			if (si_xing[2] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[2]);
-			else
-				printf("\n");
-			si_xing[2]++;
-			break;
-		case 3:printf("四星角色 **** 五郎");
-			if (si_xing[3] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[3]);
-			else
-				printf("\n");
-			si_xing[3]++;
-			break;
-		case 4:printf("四星角色 **** 辛焱");
-			if (si_xing[4] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[4]);
-			else
-				printf("\n");
-			si_xing[4]++;
-			break;
-		case 5:printf("四星角色 **** 班尼特");
-			if (si_xing[5] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[5]);
-			else
-				printf("\n");
-			si_xing[5]++;
-			break;
-		case 6:printf("四星角色 **** 香菱");
-			if (si_xing[6] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[6]);
-			else
-				printf("\n");
-			si_xing[6]++;
-			break;
-		case 7:printf("四星角色 **** 安柏");
-			if (si_xing[7] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[7]);
-			else
-				printf("\n");
-			si_xing[7]++;
-			break;
-		case 8:printf("四星角色 **** 托马");
-			if (si_xing[8] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[8]);
-			else
-				printf("\n");
-			si_xing[8]++;
-			break;
-		case 9:printf("四星角色 **** 重云");
-			if (si_xing[9] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[9]);
-			else
-				printf("\n");
-			si_xing[9]++;
-			break;
-		case 10:printf("四星角色 **** 凯亚");
-			if (si_xing[10] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[10]);
-			else
-				printf("\n");
-			si_xing[10]++;
-			break;
-		case 11:printf("四星角色 **** 迪奥娜");
-			if (si_xing[11] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[11]);
-			else
-				printf("\n");
-			si_xing[11]++;
-			break;
-		case 12:printf("四星角色 **** 米卡");
-			if (si_xing[12] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[12]);
-			else
-				printf("\n");
-			si_xing[12]++;
-			break;
-		case 13:printf("四星角色 **** 莱依拉");
-			if (si_xing[13] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[13]);
-			else
-				printf("\n");
-			si_xing[13]++;
-			break;
-		case 14:printf("四星角色 **** 砂糖");
-			if (si_xing[14] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[14]);
-			else
-				printf("\n");
-			si_xing[14]++;
-			break;
-		case 15:printf("四星角色 **** 早柚");
-			if (si_xing[15] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[15]);
-			else
-				printf("\n");
-			si_xing[15]++;
-			break;
-		case 16:printf("四星角色 **** 鹿野院平藏");
-			if (si_xing[16] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[16]);
-			else
-				printf("\n");
-			si_xing[16]++;
-			break;
-		case 17:printf("四星角色 **** 行秋");
-			if (si_xing[17] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[17]);
-			else
-				printf("\n");
-			si_xing[17]++;
-			break;
-		case 18:printf("四星角色 **** 芭芭拉");
-			if (si_xing[18] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[18]);
-			else
-				printf("\n");
-			si_xing[18]++;
-			break;
-		case 19:printf("四星角色 **** 坎蒂丝");
-			if (si_xing[19] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[19]);
-			else
-				printf("\n");
-			si_xing[19]++;
-			break;
-		case 20:printf("四星角色 **** 北斗");
-			if (si_xing[20] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[20]);
-			else
-				printf("\n");
-			si_xing[20]++;
-			break;
-		case 21:printf("四星角色 **** 菲谢尔");
-			if (si_xing[21] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[21]);
-			else
-				printf("\n");
-			si_xing[21]++;
-			break;
-		case 22:printf("四星角色 **** 雷泽");
-			if (si_xing[22] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[22]);
-			else
-				printf("\n");
-			si_xing[22]++;
-			break;
-		case 23:printf("四星角色 **** 丽莎");
-			if (si_xing[23] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[23]);
-			else
-				printf("\n");
-			si_xing[23]++;
-			break;
-		case 24:printf("四星角色 **** 九条裟罗");
-			if (si_xing[24] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[24]);
-			else
-				printf("\n");
-			si_xing[24]++;
-			break;
-		case 25:printf("四星角色 **** 多莉");
-			if (si_xing[25] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[25]);
-			else
-				printf("\n");
-			si_xing[25]++;
-			break;
-		case 26:printf("四星角色 **** 柯莱");
-			if (si_xing[26] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[26]);
-			else
-				printf("\n");
-			si_xing[26]++;
-			break;
-		case 27:printf("四星角色 **** 瑶瑶");
-			if (si_xing[27] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[27]);
-			else
-				printf("\n");
-			si_xing[27]++;
-			break;
-		case 28:printf("四星角色 **** 卡维");
-			if (si_xing[28] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[28]);
-			else
-				printf("\n");
-			si_xing[28]++;
-			break;
-		case 29:printf("四星角色 **** 绮良良");
-			if (si_xing[29] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[29]);
-			else
-				printf("\n");
-			si_xing[29]++;
-			break;
-		case 30:printf("四星角色 **** 珐露珊");
-			if (si_xing[30] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[30]);
-			else
-				printf("\n");
-			si_xing[30]++;
-			break;
-		case 31:printf("四星角色 **** 久岐忍");
-			if (si_xing[31] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[31]);
-			else
-				printf("\n");
-			si_xing[31]++;
-			break;
-		case 32:printf("四星角色 **** 罗莎莉亚");
-			if (si_xing[32] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[32]);
-			else
-				printf("\n");
-			si_xing[32]++;
-			break;
-		case 33:printf("四星角色 **** 烟绯");
-			if (si_xing[33] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[33]);
-			else
-				printf("\n");
-			si_xing[33]++;
-			break;
-		case 34:printf("四星角色 **** 琳妮特");
-			if (si_xing[34] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[34]);
-			else
-				printf("\n");
-			si_xing[34]++;
-			break;
-		case 35:printf("四星角色 **** 菲米尼");
-			if (si_xing[35] != 0)
-				printf("   无主的星辉 +%d\n", si_xinghui[35]);
-			else
-				printf("\n");
-			si_xing[35]++;
-			break;
+			if (currentIndex == mchang)//如果读到指定行就输出
+			{
+				si_xing[mchang]++;
+				fscanf(file4r, "%s %s %s", ch_rank, en_rank, ch_name);
+				printf("%s %s %s", ch_rank, en_rank, ch_name);
+				if (si_xing[mchang] != 0)
+					printf("   无主的星辉 +%d\n", si_xinghui[mchang]);
+				else
+					printf("\n");
+				break;
+			}
+			fscanf(file4r, "%s %s %s", ch_rank, en_rank, ch_name);
+			currentIndex++;
 		}
+
+		fclose(file4r);
 	}
 	else
 	{
-		int nchang = rand() % 18;
-		switch (nchang)
+		int nchang = rand() % 17 + 1;
+		int currentIndex = 1;//当前读取的行
+		FILE* file4w = fopen("./files/常驻/4w.txt", "r");
+		rewind(file4w);
+		char ch_rank[20], en_rank[20], ch_name[20];
+		while (!feof(file4w))
 		{
-		case 0:printf("四星武器 **** 弓藏   无主的星辉 +2\n"); si_xingwu[0]++;
-			break;
-		case 1:printf("四星武器 **** 祭礼弓   无主的星辉 +2\n"); si_xingwu[1]++;
-			break;
-		case 2:printf("四星武器 **** 绝弦   无主的星辉 +2\n"); si_xingwu[2]++;
-			break;
-		case 3:printf("四星武器 **** 西风猎弓   无主的星辉 +2\n"); si_xingwu[3]++;
-			break;
-		case 4:printf("四星武器 **** 昭心   无主的星辉 +2\n"); si_xingwu[4]++;
-			break;
-		case 5:printf("四星武器 **** 祭礼残章   无主的星辉 +2\n"); si_xingwu[5]++;
-			break;
-		case 6:printf("四星武器 **** 流浪乐章   无主的星辉 +2\n"); si_xingwu[6]++;
-			break;
-		case 7:printf("四星武器 **** 西风秘典   无主的星辉 +2\n"); si_xingwu[7]++;
-			break;
-		case 8:printf("四星武器 **** 西风长枪   无主的星辉 +2\n"); si_xingwu[8]++;
-			break;
-		case 9:printf("四星武器 **** 匣里灭辰   无主的星辉 +2\n"); si_xingwu[9]++;
-			break;
-		case 10:printf("四星武器 **** 雨裁   无主的星辉 +2\n"); si_xingwu[10]++;
-			break;
-		case 11:printf("四星武器 **** 祭礼大剑   无主的星辉 +2\n"); si_xingwu[11]++;
-			break;
-		case 12:printf("四星武器 **** 钟剑   无主的星辉 +2\n"); si_xingwu[12]++;
-			break;
-		case 13:printf("四星武器 **** 西风大剑   无主的星辉 +2\n"); si_xingwu[13]++;
-			break;
-		case 14:printf("四星武器 **** 匣里龙吟   无主的星辉 +2\n"); si_xingwu[14]++;
-			break;
-		case 15:printf("四星武器 **** 祭礼剑   无主的星辉 +2\n"); si_xingwu[15]++;
-			break;
-		case 16:printf("四星武器 **** 笛剑   无主的星辉 +2\n"); si_xingwu[16]++;
-			break;
-		case 17:printf("四星武器 **** 西风剑   无主的星辉 +2\n"); si_xingwu[17]++;
-			break;
+			if (currentIndex == nchang)//如果读到指定行就输出
+			{
+				si_xingwu[nchang]++;//记录数据
+				fscanf(file4w, "%s %s %s", ch_rank, en_rank, ch_name);
+				printf("%s %s %s 无主的星辉 +2\n", ch_rank, en_rank, ch_name);
+				break;
+			}
+			fscanf(file4w, "%s %s %s", ch_rank, en_rank, ch_name);
+			currentIndex++;
 		}
-	}
 
+		fclose(file4w);
+	}
 	c1 = 0;
 	c2++;
 	c4++;
 	ctotal++;
+
 }
+//
 void sanxingchang()
 {
-	int three = rand() % 13;
-	switch (three)
+	int three = rand() % 12 + 1;//指定要读取的行
+	int currentIndex = 1;//当前读取的行
+	FILE* file3 = fopen("./files/3.txt", "r");
+	rewind(file3);
+	char ch_rank[20], en_rank[20], ch_name[20];
+	while (!feof(file3))
 	{
-	case 0:printf("三星武器 *** 弹弓   无主的星尘 +15\n"); san_xing[0]++;
-		break;
-	case 1:printf("三星武器 *** 神射手之誓   无主的星尘 +15\n"); san_xing[1]++;
-		break;
-	case 2:printf("三星武器 *** 鸦羽弓   无主的星尘 +15\n"); san_xing[2]++;
-		break;
-	case 3:printf("三星武器 *** 翡玉法球   无主的星尘 +15\n"); san_xing[3]++;
-		break;
-	case 4:printf("三星武器 *** 讨龙英杰谭   无主的星尘 +15\n"); san_xing[4]++;
-		break;
-	case 5:printf("三星武器 *** 魔导绪论   无主的星尘 +15\n"); san_xing[5]++;
-		break;
-	case 6:printf("三星武器 *** 黑缨枪   无主的星尘 +15\n"); san_xing[6]++;
-		break;
-	case 7:printf("三星武器 *** 以理服人   无主的星尘 +15\n"); san_xing[7]++;
-		break;
-	case 8:printf("三星武器 *** 沐浴龙血的剑   无主的星尘 +15\n"); san_xing[8]++;
-		break;
-	case 9:printf("三星武器 *** 铁影阔剑   无主的星尘 +15\n"); san_xing[9]++;
-		break;
-	case 10:printf("三星武器 *** 飞天御剑   无主的星尘 +15\n"); san_xing[10]++;
-		break;
-	case 11:printf("三星武器 *** 黎明神剑   无主的星尘 +15\n"); san_xing[11]++;
-		break;
-	case 12:printf("三星武器 *** 冷刃   无主的星尘 +15\n"); san_xing[12]++;
-		break;
+		if (currentIndex == three)//如果读到指定行就输出
+		{
+			san_xing[three]++;
+			fscanf(file3, "%s %s %s", ch_rank, en_rank, ch_name);
+			printf("%s %s %s 无主的星尘 +15\n", ch_rank, en_rank, ch_name);
+			break;
+		}
+		fscanf(file3, "%s %s %s", ch_rank, en_rank, ch_name);
+		currentIndex++;
 	}
+
+	fclose(file3);
+
 	c1++;
 	c2++;
 	c3++;
 	ctotal++;
 }
+//
 void onechang()
 {
 	int chang = rand() % 10000;
@@ -1828,7 +1247,7 @@ void changchou()
 			{
 				onechang();
 			}
-			else if(yuan_shi >= 160)
+			else if (yuan_shi >= 160)
 			{
 				xiang_yu += 1;
 				yuan_shi -= 160;
@@ -1849,36 +1268,43 @@ void changchou()
 		}
 		else if (x == 10)
 		{
-			for (int i = 0; i < x; i++)
+			if (xiang_yu + yuan_shi / 160 + xing_chen / 75 + xing_hui / 5 < 10)
+				printf("充钱吧，少年\n");
+			else
 			{
-				start();
-				if (x <= xiang_yu)
+				for (int i = 0; i < x; i++)
 				{
-					onechang();
-				}
-				else if (yuan_shi >= 160)
-				{
-					xiang_yu += 1;
-					yuan_shi -= 160;
-					onechang();
-				}
-				else if (xing_chen >= 75)
-				{
-					xiang_yu += 1;
-					xing_chen0 -= 75;
-					onechang();
-				}
-				else if (xing_hui >= 5)
-				{
-					xiang_yu += 1;
-					xing_hui0 -= 5;
-					onechang();
+					if (1 <= xiang_yu)
+					{
+						onechang();	
+						Sleep(100);
+					}
+					else if (yuan_shi >= 160)
+					{
+						xiang_yu += 1;
+						yuan_shi -= 160;
+						onechang();
+						Sleep(100);
+					}
+					else if (xing_chen >= 75)
+					{
+						xiang_yu += 1;
+						xing_chen0 -= 75;
+						onechang();
+						Sleep(100);
+					}
+					else if (xing_hui >= 5)
+					{
+						xiang_yu += 1;
+						xing_hui0 -= 5;
+						onechang();
+						Sleep(100);
+					}
 				}
 			}
-			if (xiang_yu < 1 && yuan_shi < 160 && xing_chen < 75 && xing_hui < 5)
-				printf("充钱吧，少年\n");
+			start();
 		}
-         if (x == 0)
+		if (x == 0)
 		{
 			printf("总共抽取%d抽\n", ctotal);
 			printf("五星共%d个\n", c5);
@@ -1895,6 +1321,8 @@ void changchou()
 	}
 }
 int xing_chen0 = 0, xing_hui0 = 0;
+
+//资源
 int xingchen()
 {
 	int sum = 0;
